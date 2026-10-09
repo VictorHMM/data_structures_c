@@ -24,7 +24,7 @@ int main(void)
             case 'A':
                 append(&list, get_int("Value: "));
                 break;
-            case 'G':
+            case 'C':
                 printf("# of nodes: %i\n", count(list));
                 break;
             case 'D':

@@ -16,6 +16,6 @@ char get_char(char *prompt)
 {
   printf("%s", prompt);
   char c;
-  scanf("%c", &c);
+  scanf(" %c", &c);
   return c;
 }
