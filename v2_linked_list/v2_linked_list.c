@@ -134,6 +134,23 @@ void show(node *list)
   }
 }
 
+node* find(node *list, char *name)
+{
+  if (list == NULL)
+  {
+    return list;
+  }
+
+  node *nd = list;
+  while(nd != NULL)
+  {
+    if (strcmp(nd->name, name) == 0)
+      return nd;
+    nd = nd->next; 
+  }
+  return NULL;
+}
+
 void free_list(node *list)
 {
   if (list == NULL)

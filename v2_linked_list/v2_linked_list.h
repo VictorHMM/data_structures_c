@@ -1,4 +1,5 @@
 #include <cs50.h>
+#include <string.h>
 
 #ifndef V2_LINKED_LIST_H
 #define V2_LINKED_LIST_H
@@ -13,6 +14,7 @@ typedef struct node
 // Prototypes
 node* append(node **list, node contact);
 node* prepend(node **list, node contact);
+node* find(node *list, char *name);
 node* delete(node **list, node *contact);
 int count(node *list);
 void show(node *list);

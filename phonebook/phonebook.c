@@ -8,8 +8,9 @@
 node *contact_list[26];
 
 void add_contact();
-void print_list();
 int hash(char *name);
+void find_contact(char *name);
+void print_list();
 
 
 int main(void)
@@ -20,7 +21,7 @@ int main(void)
   }
   while (true)
   {
-    char command = toupper(get_char("(A)dd Contact\n(S)how contact list\n(E)xit\nCommand: "));
+    char command = toupper(get_char("(A)dd Contact\n(F)ind contact\n(S)how contact list\n(E)xit\nCommand: "));
     if (command == 'E')
     {
       for (int i = 0; i <= 26; i++)
@@ -35,6 +36,10 @@ int main(void)
     {
       case 'A':
         add_contact();
+        break;
+      case 'F':
+        system("clear");
+        find_contact(get_string("Name: "));
         break;
       case 'S':
         system("clear");
@@ -56,6 +61,20 @@ void add_contact()
 int hash (char *name)
 {
   return tolower(name[0]) - 97;
+}
+
+void find_contact(char *name)
+{
+  node *contact = find(contact_list[hash(name)], name);
+  if (contact == NULL)
+  {
+    printf("Contact %s not found.\n", name);
+    return;
+  }
+    
+  printf("Name: %s\n", contact->name);
+  printf("Number: %s\n", contact->number);
+  return;
 }
 
 void print_list()
