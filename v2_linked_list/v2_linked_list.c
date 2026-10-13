@@ -46,9 +46,17 @@
 
 node *append(node **list, node contact)
 {
+  node *new_contact = malloc(sizeof(node));
+  // new_contact = &contact;
+  new_contact->name = contact.name;
+  new_contact->number = contact.number;
+  // printf("%p\n%p\n", new_contact, new_contact->next);
+  new_contact->next = NULL;
+  // printf("%s\n", new_contact->name);
   if (*list == NULL)
   {
-    *list = &contact;
+    *list = new_contact;
+    //(*list)->next = NULL;
     return *list;
   }
   else
@@ -57,7 +65,7 @@ node *append(node **list, node contact)
     {
       if (n->next == NULL)
       {
-        n->next = &contact;
+        n->next = new_contact;
         return *list;
       }
     }
