@@ -80,12 +80,15 @@ node *prepend(node **list, node contact)
 
 bool delete(node **list, char *name)
 {
+  // List empty
   if (*list == NULL)
   {
     system("clear");
     printf("List empty\n");
     return false;
   }
+
+  // Contact not found
   if (!(find(*list, name)))
   {
     system("clear");
@@ -94,6 +97,8 @@ bool delete(node **list, char *name)
   }
   
   node *nd = *list;
+  // List not empty and contact present in list.
+  // Single node
   if (nd->next == NULL)
   {
     free(nd);
@@ -101,14 +106,23 @@ bool delete(node **list, char *name)
     nd = NULL;
     return true;
   }
-  else
+  else if (strcmp(nd->name, name) == 0) // Multiple nodes. Deletes first one
+  {
+    *list = (*list)->next;
+    free(nd);
+    nd = NULL;
+    return true;
+  }
+  else // Multiple nodes. Deletes somewhere in the middle.
   {
     while (nd->next != NULL)
     {
-      if (strcmp((*list)->name, name) == 0)
+      if (strcmp(nd->next->name, name) == 0)
       {
+        node *tmp = nd->next;
         nd->next = nd->next->next;
-        free(nd);
+        free(tmp);
+        tmp = NULL;
         return true;
       }
       else
@@ -116,71 +130,13 @@ bool delete(node **list, char *name)
         nd = nd->next;
       }
     }
+    // Deletes last node
     free(nd);
     nd = NULL;
     return true;
   }
-  // if (nd->next == NULL && strcmp(nd->name, name) == 0)
-  // {
-  //   *list = NULL;
-  //   free(nd);
-  //   return true;
-  // }
-  // else
-  // {
-  //   while (nd->next != NULL)
-  //   {
-  //     printf("Here\n");
-  //     if (strcmp(nd->next->name, name) == 0)
-  //     {
-  //       node *tmp = nd->next;
-  //       nd->next = nd->next->next;
-  //       free(tmp);
-  //       return true;
-  //     }
-  //     else
-  //       nd->next = nd->next->next;
-  //   }
-  // }
   return false;
 }
-
-// node *delete(node **list, node *contact)
-// {
-//   if (*list == NULL)
-//   {
-//     system("clear");
-//     printf("List empty\n");
-//     return NULL;
-//   }
-//   node *nd = *list;
-//   if (nd->number == contact->number)
-//   {
-//     *list = nd->next;
-//     free(nd);
-//   }
-//   else
-//   {
-//     while (nd != NULL)
-//     {
-//       if (nd->next == NULL)
-//       {
-//         system("clear");
-//         printf("Number %s not found.\n", contact->number);
-//         return *list;
-//       }
-//       if (nd->next->number == contact->number)
-//       {
-//         node *tmp = nd->next;
-//         nd->next = nd->next->next;
-//         free(tmp);
-//         return *list;
-//       }
-//       nd = nd->next;
-//     }
-//   }
-//   return *list;
-// }
 
 void show(node *list)
 {
