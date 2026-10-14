@@ -7,10 +7,12 @@
 
 node *contact_list[26];
 
-void add_contact();
+void add_contact(void);
 int hash(char *name);
 void find_contact(char *name);
-void print_list();
+void print_list(void);
+void remove_contact(char *name);
+bool list_empty(void);
 
 
 int main(void)
@@ -21,7 +23,7 @@ int main(void)
   }
   while (true)
   {
-    char command = toupper(get_char("(A)dd Contact\n(F)ind contact\n(S)how contact list\n(E)xit\nCommand: "));
+    char command = toupper(get_char("(A)dd Contact\n(D)elete contact\n(F)ind contact\n(S)how contact list\n(E)xit\nCommand: "));
     if (command == 'E')
     {
       for (int i = 0; i <= 26; i++)
@@ -36,6 +38,9 @@ int main(void)
     {
       case 'A':
         add_contact();
+        break;
+      case 'D':
+        remove_contact(get_string("Name: "));
         break;
       case 'F':
         system("clear");
@@ -79,12 +84,39 @@ void find_contact(char *name)
 
 void print_list()
 {
+  if (list_empty())
+  {
+    printf("List empty\n");
+    return;
+  }
   for (int i = 0; i <= 26; i++)
   {
     if (contact_list[i] != NULL)
     {
-      printf("### %c ###\n\n", toupper(i + 97));
+      printf("### %c ###\n", toupper(i + 97));
+      printf("---------\n");
       show(contact_list[i]);
+      printf("---------\n");
     }
   }
+}
+
+void remove_contact(char *name)
+{
+  if (delete(&(contact_list[hash(name)]), name))
+  {
+    printf("Success\n");
+    return;
+  }
+  printf("Fail\n");
+}
+
+bool list_empty()
+{
+  for (int i = 0; i <= 26; i++)
+  {
+    if (contact_list[i] != NULL)
+      return false;
+  }
+  return true;
 }

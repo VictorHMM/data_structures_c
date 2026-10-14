@@ -15,7 +15,7 @@ typedef struct node
 node* append(node **list, node contact);
 node* prepend(node **list, node contact);
 node* find(node *list, char *name);
-node* delete(node **list, node *contact);
+bool delete(node **list, char *name);
 int count(node *list);
 void show(node *list);
 void free_list(node *list);
