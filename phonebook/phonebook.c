@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <cs50.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -9,6 +11,8 @@ node *contact_list[26];
 
 void add_contact(void);
 int hash(char *name);
+void persist_to_file(void);
+void load_from_file();
 void find_contact(char *name);
 void print_list(void);
 void remove_contact(char *name);
@@ -21,11 +25,14 @@ int main(void)
   {
     contact_list[i] = NULL;
   }
+  load_from_file();
+  return 0;
   while (true)
   {
     char command = toupper(get_char("(A)dd Contact\n(D)elete contact\n(F)ind contact\n(S)how contact list\n(E)xit\nCommand: "));
     if (command == 'E')
     {
+      persist_to_file();
       for (int i = 0; i <= 26; i++)
       {
         if (contact_list[i] != NULL)
@@ -119,4 +126,36 @@ bool list_empty()
       return false;
   }
   return true;
+}
+
+void persist_to_file()
+{
+  FILE *db = fopen("phonebook.csv", "a");
+  node nd;
+  for (int i = 0; i <= 26; i++)
+  {
+    if (contact_list[i] != NULL)
+    {
+      node *lst = contact_list[i];
+      while(lst != NULL)
+      {
+        fprintf(db, "%s,%s\n", lst->name, lst->number);
+        lst = lst->next;
+      }
+    }
+  }
+  fclose(db);
+}
+
+void load_from_file()
+{
+  size_t sz = sizeof(char);
+  FILE *db = fopen("phonebook.csv", "r");
+  char **line = malloc(sz);
+  
+  while(getline(line, &sz, db) != -1)
+  {
+    printf("%s\n", *line);
+  }
+  free(line);
 }
