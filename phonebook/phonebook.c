@@ -7,10 +7,13 @@
 #include <stdbool.h>
 #include "../v2_linked_list/v2_linked_list.h"
 
-node *contact_list[26];
+typedef node contact;
+
+contact *contact_list[26];
 
 void add_contact(void);
 int hash(char *name);
+contact create_contact(char *name, char *number);
 void persist_to_file(void);
 void load_from_file();
 void find_contact(char *name);
@@ -63,11 +66,17 @@ int main(void)
 
 void add_contact()
 {
-  node new_contact;
-  new_contact.name = get_string("Name: ");
-  new_contact.number = get_string("Number: ");
+  contact new_contact = create_contact(get_string("Name: "), get_string("Number: "));
   int name_hash = hash(new_contact.name);
   contact_list[name_hash] = append(&(contact_list[name_hash]), new_contact);
+}
+
+contact create_contact(char *name, char *number)
+{
+  contact ctt;
+  ctt.name = name;
+  ctt.number = number;
+  return ctt;
 }
 
 int hash (char *name)
@@ -77,7 +86,7 @@ int hash (char *name)
 
 void find_contact(char *name)
 {
-  node *contact = find(contact_list[hash(name)], name);
+  contact *contact = find(contact_list[hash(name)], name);
   if (contact == NULL)
   {
     printf("Contact %s not found.\n", name);
@@ -131,12 +140,12 @@ bool list_empty()
 void persist_to_file()
 {
   FILE *db = fopen("phonebook.csv", "a");
-  node nd;
+  contact nd;
   for (int i = 0; i <= 26; i++)
   {
     if (contact_list[i] != NULL)
     {
-      node *lst = contact_list[i];
+      contact *lst = contact_list[i];
       while(lst != NULL)
       {
         fprintf(db, "%s,%s\n", lst->name, lst->number);
@@ -149,13 +158,14 @@ void persist_to_file()
 
 void load_from_file()
 {
-  size_t sz = sizeof(char);
   FILE *db = fopen("phonebook.csv", "r");
-  char **line = malloc(sz);
+  size_t sz = 0;
+  char *line = NULL;
   
-  while(getline(line, &sz, db) != -1)
+  while(getline(&line, &sz, db) != -1)
   {
-    printf("%s\n", *line);
+    printf("%s\n", line);
   }
+  fclose(db);
   free(line);
 }
