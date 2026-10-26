@@ -4,59 +4,16 @@
 #include <stdlib.h>
 #include "v2_linked_list.h"
 
-// int main(void)
-// {
-//     node *list = NULL;
-//     while(true)
-//     {
-//         printf("#####\n");
-//         char command = get_char("(A)ppend\n(C)ount\n(D)elete\n(P)repend\n(S)how\n(E)xit\n(F)ree\nCommand: ");
-//         if (command == 'E')
-//         {
-//             free_list(list);
-//             list = NULL;
-//             break;
-//         }
+void free_node(node *nd);
 
-//         switch (command)
-//         {
-//             case 'A':
-//                 append(&list, get_int("Value: "));
-//                 break;
-//             case 'C':
-//                 printf("# of nodes: %i\n", count(list));
-//                 break;
-//             case 'D':
-//                 delete(&list, get_int("Value: "));
-//                 break;
-//             case 'P':
-//                 prepend(&list, get_int("Value: "));
-//                 break;
-//             case 'S':
-//                 system("clear");
-//                 show(list);
-//                 break;
-//             case 'F':
-//                 free_list(list);
-//                 list = NULL;
-//                 break;
-//         }
-//     }
-// }
-
-node *append(node **list, node contact)
+node *append(node **list, node *nd)
 {
-  node *new_contact = malloc(sizeof(node));
-  // new_contact = &contact;
-  new_contact->name = contact.name;
-  new_contact->number = contact.number;
-  // printf("%p\n%p\n", new_contact, new_contact->next);
-  new_contact->next = NULL;
-  // printf("%s\n", new_contact->name);
+  node *new_node = nd;
+  new_node->next = NULL;
+
   if (*list == NULL)
   {
-    *list = new_contact;
-    //(*list)->next = NULL;
+    *list = new_node;
     return *list;
   }
   else
@@ -65,7 +22,7 @@ node *append(node **list, node contact)
     {
       if (n->next == NULL)
       {
-        n->next = new_contact;
+        n->next = new_node;
         return *list;
       }
     }
@@ -73,7 +30,7 @@ node *append(node **list, node contact)
   return *list;
 }
 
-node *prepend(node **list, node contact)
+node *prepend(node **list, node nd)
 {
   return *list;
 }
@@ -101,7 +58,7 @@ bool delete(node **list, char *name)
   // Single node
   if (nd->next == NULL)
   {
-    free(nd);
+    free_node(nd);
     *list = NULL;
     nd = NULL;
     return true;
@@ -109,7 +66,7 @@ bool delete(node **list, char *name)
   else if (strcmp(nd->name, name) == 0) // Multiple nodes. Deletes first one
   {
     *list = (*list)->next;
-    free(nd);
+    free_node(nd);
     nd = NULL;
     return true;
   }
@@ -121,7 +78,7 @@ bool delete(node **list, char *name)
       {
         node *tmp = nd->next;
         nd->next = nd->next->next;
-        free(tmp);
+        free_node(tmp);
         tmp = NULL;
         return true;
       }
@@ -131,7 +88,7 @@ bool delete(node **list, char *name)
       }
     }
     // Deletes last node
-    free(nd);
+    free_node(nd);
     nd = NULL;
     return true;
   }
@@ -147,12 +104,13 @@ void show(node *list)
   }
   else
   {
-    node *n = list;
-    while (n != NULL)
+    node *nd = list;
+    while (nd != NULL)
     {
-      printf("Name: %s\n", n->name);
-      printf("Number: %s\n", n->number);
-      n = n->next;
+      printf("Name: %s\n", nd->name);
+      printf("Number: %s\n", nd->number);
+      printf("Address: %p\n", nd);
+      nd = nd->next;
     }
   }
 }
@@ -182,9 +140,9 @@ void free_list(node *list)
   }
   else
   {
-    node *n = list;
+    node *nd = list;
     list = list->next;
-    free(n);
+    free_node(nd);
     free_list(list);
   }
 }
@@ -192,12 +150,19 @@ void free_list(node *list)
 int count(node *list)
 {
   int counter = 0;
-  node *n = list;
+  node *nd = list;
 
-  while (n != NULL)
+  while (nd != NULL)
   {
-    n = n->next;
+    nd = nd->next;
     counter++;
   }
   return counter;
+}
+
+void free_node(node *nd)
+{
+  free(nd->name);
+  free(nd->number);
+  free(nd);
 }
