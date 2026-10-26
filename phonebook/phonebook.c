@@ -13,12 +13,13 @@ contact *contact_list[26];
 
 void add_contact(char *name, char *number);
 int hash(char *name);
-contact create_contact(char *name, char *number);
+contact* create_contact(char *name, char *number);
 void persist_to_file(void);
 void load_from_file();
 void find_contact(char *name);
 void print_list(void);
 void remove_contact(char *name);
+char *strp(char *str);
 bool list_empty(void);
 
 
@@ -29,7 +30,7 @@ int main(void)
     contact_list[i] = NULL;
   }
   load_from_file();
-  return 0;
+
   while (true)
   {
     char command = toupper(get_char("(A)dd Contact\n(D)elete contact\n(F)ind contact\n(S)how contact list\n(E)xit\nCommand: "));
@@ -47,35 +48,35 @@ int main(void)
     switch (command)
     {
       case 'A':
-      add_contact(get_string("Name: "), get_string("Number: "));
-      break;
+        add_contact(strp(get_string("Name: ")), strp(get_string("Number: ")));
+        break;
       case 'D':
-      remove_contact(get_string("Name: "));
-      break;
+        remove_contact(get_string("Name: "));
+        break;
       case 'F':
-      system("clear");
-      find_contact(get_string("Name: "));
-      break;
+        system("clear");
+        find_contact(get_string("Name: "));
+        break;
       case 'S':
-      system("clear");
-      print_list();
-      break;
+        system("clear");
+        print_list();
+        break;
     }
   }
 }
 
 void add_contact(char *name, char *number)
 {
-  contact new_contact = create_contact(name, number);
-  int name_hash = hash(new_contact.name);
+  contact *new_contact = create_contact(name, number);
+  int name_hash = hash(new_contact->name);
   contact_list[name_hash] = append(&(contact_list[name_hash]), new_contact);
 }
 
-contact create_contact(char *name, char *number)
+contact* create_contact(char *name, char *number)
 {
-  contact ctt;
-  ctt.name = name;
-  ctt.number = number;
+  contact *ctt = malloc(sizeof(contact));
+  ctt->name = name;
+  ctt->number = number;
   return ctt;
 }
 
@@ -139,7 +140,7 @@ bool list_empty()
 
 void persist_to_file()
 {
-  FILE *db = fopen("phonebook.csv", "a");
+  FILE *db = fopen("phonebook.csv", "w");
   contact nd;
   for (int i = 0; i <= 26; i++)
   {
@@ -162,25 +163,29 @@ void load_from_file()
   size_t sz = 0;
   char *line = NULL;
   
-  char *delim = malloc(1);
-  *delim = 44;
+  char *delim = malloc(2);
+  delim[0] = 44;
+  delim[1] = '\0';
+
+  char *saveptr = NULL;
   while(getline(&line, &sz, db) != -1)
   {
-    // printf("%s", line);
-    // char nl = '\n';
-    char* name = strtok(line, delim);
-    char* number = strtok(NULL, delim);
-    if (number[strlen(number) - 1] == '\n')
-      number[strlen(number) - 1] = '\0';
-    // printf("Name: %s\n", name);
-    // printf("Number: %s\n", number);
-    // printf("%c\n", number[strlen(number) - 1]);
+    if (line == NULL)
+      return;
+    if (line[strlen(line) - 1] == '\n')
+      line[strlen(line) - 1] = '\0';
+    char *name = strp(strtok_r(line, delim, &saveptr));
+    char *number = strp(strtok_r(NULL, delim, &saveptr));
     add_contact(name, number);
   }
-  print_list();
   fclose(db);
   free(delim);
-  delim = NULL;
   free(line);
-  line = NULL;
+}
+
+char* strp(char *str)
+{
+  char *rtn = malloc(strlen(str) + 1);
+  strcpy(rtn, str);
+  return rtn;
 }
