@@ -6,13 +6,13 @@
 
 typedef struct node
 {
-  string name;  
-  string number;
+  char *name;  
+  char *number;
   struct node *next;
 } node;
 
 // Prototypes
-node* append(node **list, node contact);
+node* append(node **list, node *contact);
 node* prepend(node **list, node contact);
 node* find(node *list, char *name);
 bool delete(node **list, char *name);
